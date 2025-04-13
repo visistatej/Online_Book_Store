@@ -1,0 +1,44 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-info">
+  <a class="navbar-brand d-flex align-items-center mr-3" href="/">
+    <img src="{% static 'images/logo/logo1.png' %}" alt="Logo" width="80" height="80" class="d-inline-block align-top mr-2">
+  </a>
+  
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav" style="min-height: 70px;">
+    <form class="form-inline my-2 my-lg-0" action="{% url 'search:search' %}" method="GET">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search Book" name="q" value="{{ search }}">
+      <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    <ul class="navbar-nav ml-auto">
+      {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ request.user.username }}
+          </a>
+          <div class="dropdown-menu " aria-labelledby="navbarDropdown">
+            <a class="dropdown-item " href="{% url 'order:order_list' %}">My Orders</a>
+            <a class="dropdown-item " href="{% url 'store:signout' %}">Sign Out</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white d-flex align-items-center" href="{% url 'cart:cart_details' %}">
+            <span>Cart</span>
+            <span class="badge badge-pill badge-danger ml-2 cart-badge">{{ cart|length }}</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'store:signin' %}">Sign In</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="{% url 'cart:cart_details' %}">
+            Cart <span class="badge badge-pill badge-danger">{{ cart|length }}</span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

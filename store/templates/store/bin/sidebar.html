@@ -1,0 +1,20 @@
+            <div class="header-bottom" style="background-color: cornsilk">
+				<div class="container-fluid">
+					<div class="row ">
+						<div class="col-md-2offset-md-1 ">
+							<div class="categorymenu-vertical">
+								<h4 class="category-title">CATEGORY</h4>
+								{% for p in cat %}
+								<div class="cat-wrapper text-center">
+									<a href="{% url 'store:category' id=p.id %}">
+										<img src="{{ p.icon.url }}" class="category-icon" alt="{{ p.name }}"/>
+									</a>
+									<a class="category-name" href="{% url 'store:category' id=p.id %}">{{ p.name }}</a>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			

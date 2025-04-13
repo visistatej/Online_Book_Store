@@ -1,0 +1,98 @@
+{% load static %}
+<style>
+.footer {
+	background-color: #222;
+	color: #ccc;
+	padding: 40px 0;
+	font-size: 15px;
+}
+
+.footer h3 {
+	color: #fff;
+	margin-bottom: 20px;
+}
+
+.footer ul {
+	list-style: none;
+	padding: 0;
+}
+
+.footer ul li {
+	margin-bottom: 12px;
+}
+
+.footer_contact i,
+.footer_menu i {
+	color: #f0ad4e;
+	margin-right: 8px;
+}
+
+.footer_menu a {
+	color: #ccc;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+.footer_menu a:hover {
+	color: #f0ad4e;
+	text-decoration: underline;
+}
+
+.footer_paymentmethod img {
+	height: 40px;
+	margin-right: 10px;
+}
+
+@media (max-width: 767px) {
+	.footer {
+		text-align: center;
+	}
+	.footer_paymentmethod img {
+		margin-bottom: 10px;
+	}
+}
+</style>
+
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<!-- Contact Info -->
+			<div class="col-sm-6 col-md-4 col-xs-12 footer_menu">
+				<h3>Contact</h3>
+				<ul>
+					<li class="footer_contact">
+						<i class="fa fa-phone"></i>
+						<p>+91 7989828538</p>
+					</li>
+					<li class="footer_contact">
+						<i class="fa fa-envelope"></i>
+						<p>ruchithakonduru@gmail.com</p>
+					</li>
+					<li class="footer_contact">
+						<i class="fa fa-map-marker"></i>
+						<p>Jalandhar, India</p>
+					</li>
+				</ul>
+			</div>
+
+			<!-- Menu Links -->
+			<div class="col-sm-6 col-md-4 col-xs-12 footer_menu">
+				<h3>Menu</h3>
+				<ul>
+					<li class="footer_menu">
+						<a href="{% url 'store:books' %}"><i class="fa fa-angle-right"></i> Books</a>
+					</li>
+				</ul>
+			</div>
+
+			<!-- Payment Methods -->
+			<div class="col-sm-6 col-md-4 col-xs-12 footer_news">
+				<h3>We accept payment via</h3>
+				<div class="footer_paymentmethod">
+					<!-- <img src="{% static 'images/bkash.png' %}" alt="bKash" />
+					<img src="{% static 'images/rocket.png' %}" alt="Rocket" /> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,105 @@
+{% extends 'store/base.html' %}
+
+{% block container %}
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Cart Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white text-center rounded-top">
+                    <h4 class="mb-0">Your Shopping Cart</h4>
+                </div>
+                <div class="card-body p-0">
+                    {% if cart %}
+                    <table class="table table-striped table-hover text-center mb-0 align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Cover</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                                {% with book=item.book %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ book.coverpage.url }}" alt="{{ book.name }}" class="img-fluid rounded shadow-sm" style="width: 50px; height: auto;">
+                                    </td>
+                                    <td class="text-capitalize">{{ book.name }}</td>
+                                    <td>
+                                        <input type="number" min="1" value="{{ item.quantity }}"
+                                            onchange="updateCartItem(this, {{ book.id }})"
+                                            class="form-control text-center mx-auto"
+                                            style="max-width: 70px;">
+                                    </td>
+                                    <td id="{{ book.id }}">{{ item.total_price }} ₹</td>
+                                    <td>
+                                        <a href="{% url 'cart:cart_remove' bookid=book.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fa fa-trash" style="color: black;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                        <div class="p-4 text-center">
+                            <p class="lead">Your cart is empty.</p>
+                            <a href="{% url 'store:index' %}" class="btn btn-primary mt-3">Browse Books</a>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if cart %}
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <a href="{% url 'store:index' %}" class="btn btn-outline-secondary">Continue Shopping</a>
+                    <a href="{% url 'order:order_create' %}" class="btn btn-success">Checkout</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Summary Panel -->
+        <div class="col-lg-4" id="abc">
+            <!-- Summary will be loaded here via AJAX -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        summary();
+    });
+
+    function summary() {
+        $.ajax({
+            url: "summary",
+            type: "GET",
+            success: function (data) {
+                $("#abc").html(data);
+            }
+        });
+    }
+
+    function updateCartItem(obj, id) {
+        $.ajax({
+            url: "update/" + id + "/" + obj.value,
+            type: "GET",
+            data: {
+                bookid: id,
+                quantity: obj.value
+            },
+            success: function (data) {
+                $("#" + id).html(data);
+                summary();
+                totalCart();
+            }
+        });
+    }
+</script>
+{% endblock %}

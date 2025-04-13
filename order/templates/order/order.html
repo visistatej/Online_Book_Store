@@ -1,0 +1,157 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load customfunction %}
+{% load crispy_forms_tags %}
+
+{% block container %}
+<div class="container mt-5 mb-5">
+  <div class="row">
+    <!-- Shipping Address -->
+    <div class="col-md-8 order-md-1 cart_info">
+      <div class="card shadow-sm p-4">
+        <h4 class="mb-4">🚚 Shipping Address</h4>
+
+        {% if messages %}
+        <div class="alert-messages">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form action="" method="POST" class="needs-validation" novalidate>
+          {% csrf_token %}
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              {{ form.name|as_crispy_field }}
+            </div>
+            <div class="col-md-6 mb-3">
+              {{ form.email|as_crispy_field }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.phone|as_crispy_field }}
+          </div>
+
+          <div class="mb-3">
+            {{ form.address|as_crispy_field }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-5 mb-3">
+              {{ form.division|as_crispy_field }}
+            </div>
+            <div class="col-md-4 mb-3">
+              {{ form.district|as_crispy_field }}
+            </div>
+            <div class="col-md-3 mb-3">
+              {{ form.zip_code|as_crispy_field }}
+            </div>
+          </div>
+
+          <hr class="mb-4">
+
+          <div class="mb-3">
+            {{ form.payment_method|as_crispy_field }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              {{ form.account_no|as_crispy_field }}
+            </div>
+            <div class="col-md-6 mb-3">
+              {{ form.transaction_id|as_crispy_field }}
+            </div>
+          </div>
+
+          <hr class="mb-4">
+
+          <button class="btn btn-warning btn-lg btn-block" type="submit">
+            Continue to Checkout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Checkout Summary -->
+    <div class="col-md-4 order-md-2 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">💳 Checkout Summary</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between">
+            Books <span>{{ cart|length }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            Subtotal <span>{{ cart.get_total_price }} ₹</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            Shipping <span>{{ cost|shipping }} ₹</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between font-weight-bold">
+            Total <span>{{ cart.get_total_price|payabletotal }} ₹</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const divisionDistricts = {
+    "Coastal Andhra": {
+      "Guntur": "522001",
+      "Krishna": "521001",
+      "Visakhapatnam": "530001"
+    },
+    "Rayalaseema": {
+      "Chittoor": "517001",
+      "Kurnool": "518001",
+      "Anantapur": "515001",
+      "Kadapa": "516001"
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const divisionField = document.getElementById('id_division');
+    const districtField = document.getElementById('id_district');
+    const zipField = document.getElementById('id_zip_code');
+
+    function updateDistricts(selectedDivision) {
+      const districts = divisionDistricts[selectedDivision];
+      districtField.innerHTML = '<option value="">Select district</option>';
+      for (const district in districts) {
+        const option = document.createElement('option');
+        option.value = district;
+        option.text = district;
+        districtField.appendChild(option);
+      }
+      zipField.value = '';
+    }
+
+    function updateZipCode(selectedDivision, selectedDistrict) {
+      const zip = divisionDistricts[selectedDivision]?.[selectedDistrict] || '';
+      zipField.value = zip;
+    }
+
+    divisionField.addEventListener('change', function () {
+      updateDistricts(this.value);
+    });
+
+    districtField.addEventListener('change', function () {
+      updateZipCode(divisionField.value, this.value);
+    });
+
+    // Populate if already selected
+    if (divisionField.value) {
+      updateDistricts(divisionField.value);
+      if (districtField.value) {
+        updateZipCode(divisionField.value, districtField.value);
+      }
+    }
+  });
+</script>
+
+{% endblock %}
