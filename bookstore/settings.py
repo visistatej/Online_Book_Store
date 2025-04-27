@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -163,3 +163,5 @@ MESSAGE_TAGS = {
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+RAZORPAY_API_KEY = 'rzp_test_4lCvv9VSbrdKJX'
+RAZORPAY_API_SECRET = 'LdU8MwgdglIm9Wsa3sR6fCkj'

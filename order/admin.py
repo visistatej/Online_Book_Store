@@ -6,7 +6,7 @@ class OrderItemList(admin.TabularInline):
 	extra = 0
 
 class OrderList(admin.ModelAdmin):
-	list_display = ['id','name', 'email', 'phone', 'address', 'division', 'district', 'zip_code', 'account_no', 'totalbook', 'created', 'updated', 'paid']
+	list_display = ['id','name', 'email', 'phone', 'address', 'division', 'district', 'zip_code', 'totalbook', 'created', 'updated', 'paid']
 	list_filter = ['paid']
 	exclude = ['name', 'email', 'phone']
 	inlines = [OrderItemList]

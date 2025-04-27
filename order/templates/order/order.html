@@ -53,22 +53,16 @@
 
           <hr class="mb-4">
 
-          <div class="mb-3">
-            {{ form.payment_method|as_crispy_field }}
+          <div class="d-none">
+            {{ form.account_no }}
+            {{ form.transaction_id }}
           </div>
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              {{ form.account_no|as_crispy_field }}
-            </div>
-            <div class="col-md-6 mb-3">
-              {{ form.transaction_id|as_crispy_field }}
-            </div>
-          </div>
+          
 
           <hr class="mb-4">
 
-          <button class="btn btn-warning btn-lg btn-block" type="submit">
+          <button id="rzp-button" class="btn btn-warning btn-lg btn-block" type="button">
             Continue to Checkout
           </button>
         </form>
@@ -154,4 +148,86 @@
   });
 </script>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('rzp-button').onclick = function (e) {
+    e.preventDefault();
+
+    // Fetch form field values (no payment_method needed)
+    const name = document.getElementById('id_name').value;
+    const email = document.getElementById('id_email').value;
+    const phone = document.getElementById('id_phone').value;
+    const address = document.getElementById('id_address').value;
+    const division = document.getElementById('id_division').value;
+    const district = document.getElementById('id_district').value;
+    const zip_code = document.getElementById('id_zip_code').value;
+
+    // Perform basic client-side validation
+    if (!name || !email || !phone || !address || !division || !district || !zip_code) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    fetch("{% url 'order:create_order_ajax' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        division: division,
+        district: district,
+        zip_code: zip_code
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const orderId = data.order_id; 
+      const options = {
+        "key": "rzp_test_4lCvv9VSbrdKJX",
+        "amount": data.amount,
+        "currency": "INR",
+        "name": "Online Book Store",
+        "description": "Book Purchase",
+        "order_id": orderId,
+        "handler": function (response) {
+          const orderId = "{{ order.razorpay_order_id|default:'' }}";  // Optional fallback
+          window.location.href = `/order/success/?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}`;
+        },
+        "prefill": {
+          "name": name,
+          "email": email,
+          "contact": phone
+        },
+        "retry": {
+          "enabled": true,
+          "max_count": 3
+        },
+        "theme": {
+          "color": "#F37254"
+        },
+        "method": {
+          "netbanking": true,
+          "card": true,
+          "upi": true,
+          "wallet": true
+        },
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+      rzp.on('payment.failed', function (response){
+        alert("Payment Failed: " + response.error.description);
+        console.error("Payment Failure Details:", response.error);
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("Something went wrong. Please try again.");
+    });
+  };
+</script>
 {% endblock %}

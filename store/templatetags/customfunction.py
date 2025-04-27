@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 from django import template
 register = template.Library()
 
-shippingConst = 100
+shippingConst = 0
 
 
 @register.filter(name='text_short')
